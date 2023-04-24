@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1.0">
+<title>Life Cycle Manager</title>
+<style type=text/css>html,input{font-size:4vw}h1{font-size:5vw;text-align:center}p{font-size:2vw}hr{background-color:#333;border:0 none;height:.1vw}body .container{font-family:"SF Pro Text","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;width:70vw;margin:0 auto;font-size:3vw}label{display:block}select{float:right;font-size:2vw;padding:1vw;width:33%;border-radius:1vw;border:.1vw solid #acacac;color:#181820;appearance:none;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none}input[type=checkbox]{height:3vw}input[type=text],input[type=password]{width:70vw;border:.1vw solid grey;text-decoration:none;padding:.7vw 2.0vw;border-radius:2vw}input[type=submit]{width:75vw;border:0vw;text-decoration:none;padding:.25em 5em;color:white;background-color:#4caf50;cursor:pointer;border-radius:2vw}input[type=submit]#refresh{background-color:#44bbe3}input[type=submit]#join{background-color:#4caf50;margin-bottom:2vw}input[type=submit][disabled]{color:#aaa;background-color:#eeeeee!important}input.apple-switch{float:right;position:relative;-webkit-appearance:none;outline:0;width:5vw;height:3vw;background-color:#fff;border:.1vw solid #d9dadc;border-radius:5vw;box-shadow:inset -20vw 0 0 #fff}input.apple-switch:after{content:"";position:absolute;top:.1vw;left:.1vw;background:transparent;width:2.6vw;height:2.6vw;border-radius:50%;box-shadow:.2vw .4vw .6vw rgba(0,0,0,0.2)}input.apple-switch:checked{box-shadow:inset 2vw 0 0 0 #4ed164;border-color:#4ed164}input.apple-switch:checked:after{left:2vw;box-shadow:-0.2vw .4vw .3vw rgba(0,0,0,0.05)}.networks{list-style:none;margin:1vw 0;padding:0}.networks li{cursor:pointer;padding:.25vw;margin-bottom:.25vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;padding-left:7vw}.networks li.secure::before{content:"🔒";position:absolute;padding-left:2vw;left:0}.networks li.selected{font-weight:bold;background-color:#ddd;border-radius:2vw}.networks li:hover{background-color:#eee;border-radius:2vw}.nonetworks{text-align:center;margin-bottom:1vw}.field{margin-bottom:.5vw}</style>
+</head>
+<body>
+<div class=container>
+<h1>Life Cycle Manager <sup><sub>2.2.5</sub></sup></h1>
+<p style=text-align:center;margin-top:-3vw><sup><sub>For more information visit <b>Studio</b>Pieters<sup>·</sup> at www.studiopieters.nl</sub></sup><p>
+<p>1. Your device will automatically search for available Wi-Fi networks. Tap the name of the Wi-Fi network that you want to join. If it's not there try the search button.</p>
+<form action=/settings method=get>
+<input type=submit id=refresh value=Search />
+</form>
+<form action=/settings method=post>
+<ul class=networks>
+{% for network in networks %}
+<li class="{{ network.secure | ternary('secure', 'unsecure') }}">{{ network.ssid }}</li>
+{% endfor %}
+</ul>
+<div class=nonetworks style=display:none>
+No networks found
+</div>
+<div class="field required ssid" style=display:none>
+<label for=ssid>SSID:</label>
+<input type=text id=ssid name=ssid />
+</div>
+<br>
+<div class="field required password" style=display:none>
+<label for=password>Enter Wi-Fi password</label>
+<p>2. If a Wi-Fi network has a lock next to its name, it's a password-protected network. Wi-Fi passwords are case-sensitive, so make sure you're typing the correct uppercase or lowercase characters.</p>
+<input type=password id=password name=password />
+<br><br>
+</div>
+<div class="field otarepo" style=display:block>
+<label for=otarepo>Repository</label>
+<p>3. A repository contains all project files, including the revision history. </p>
+<input type=text id=otarepo name=otarepo value=AchimPieters/Repository-name />
+</div>
+<br>
+<div class="field otafile" style=display:block>
+<label for=otafile>Binary file name</label>
+<p>4. A .bin file is a generic data file that stores information entirely or partially in binary format. The .bin is called by default main.bin</p>
+<input type=text id=otafile name=otafile value=main.bin />
+</div>
+<br>
+<div class="form-checkbox unchecked">
+<label>
+<input name=otabeta type=hidden value=0 />
+Pre-release
+<input class=apple-switch type=checkbox value=1 name=otabeta id=otabeta />
+<p>5. This release is labeled as non-production ready, and will be used when enabled. Note: It can be instable or even not working. Use at own risk.</P>
+</label>
+</div>
+<br>
+<div class="field led_pin" style=display:block>
+<label style=float:left for=led_pin>
+LED Pin
+<select name=led_pin id=led_pin>
+<option value=n>no pin</option>
+<option value=2>gpio-2</option>
+<option value=4>gpio-4</option>
+<option value=5>gpio-5</option>
+<option value=12>gpio-12</option>
+<option value=13>gpio-13</option>
+<option value=14>gpio-14</option>
+</select>
+<p> 6. Most development boards have an integrated LED. By setting the LED pin you can visually follow the installation and update of your device.</p>
+<br>
+</label>
+<label for=led_pol>
+<input name=led_pol type=hidden value=0 />
+Invert
+<input class=apple-switch type=checkbox value=1 name=led_pol id=led_pol />
+<p>7. Operate in “inverted” mode. When the pin is HIGH, the LED is off; when the pin is LOW, the LED is on.</p>
+</label>
+</div>
+<input type=submit id=join value=Join disabled />
+<br>
+<br>
+<br>
+<div class="field otasrvr" style=display:block>
+<label for=otasrvr>Firmware Server</label>
+<p>When you have both set up the server and put firmware files in place for download, verify that the server can be reached by your devices.</p>
+<input type=text id=otasrvr name=otasrvr value=your_server.com/directory/ />
+</div>
+</form>
+<p style=text-align:center><sup><sub>Copyright 2023 | <b>Studio</b>Pieters<sup>·</sup> | www.studiopieters.nl</sub></sup><p>
+</div>
+<script>var ssid_field,password_block,password_field,join_button;ssid_block=document.querySelector(".field.ssid");ssid_field=document.getElementById("ssid");password_block=document.querySelector(".field.password");password_field=document.getElementById("password");join_button=document.getElementById("join");if(document.querySelectorAll("ul.networks li").length==0){show(document.querySelector(".nonetworks"));show(ssid_block);show(password_block);password_block.classList.remove("required")}function enable(a){a.disabled=""}function disable(a){a.disabled="disabled"}function show(a){a.style.display="block"}function hide(a){a.style.display="none"}function selectNetwork(b){let nets=document.querySelectorAll("ul.networks li");for(var a=0;a<nets.length;a++){nets[a].classList.remove("selected")}b.classList.add("selected")}var nets,i;nets=document.querySelectorAll("ul.networks li.unsecure");for(i=0;i<nets.length;i++){nets[i].onclick=function(a){a.preventDefault();selectNetwork(this);ssid_field.value=this.innerHTML;hide(password_block);disable(password_field);password_field.value="";enable(join_button)}}nets=document.querySelectorAll("ul.networks li.secure");for(i=0;i<nets.length;i++){nets[i].onclick=function(a){a.preventDefault();selectNetwork(this);ssid_field.value=this.innerHTML;enable(password_field);show(password_block);disable(join_button)}}let s=ssid_field;let p=password_field;s.onchange=s.onkeydown=s.onpaste=s.oninput=p.onchange=p.onkeydown=p.onpaste=p.oninput=function(a){var b=enable;if(ssid_block.classList.contains("required")&&ssid_field.value==""){b=disable}if(password_block.classList.contains("required")&&password_field.value==""){b=disable}b(join_button)};</script>
+</body>
+</html>
